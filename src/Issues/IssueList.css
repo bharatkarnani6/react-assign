@@ -5,3 +5,19 @@
 h2{
     text-align: center;
 }
+.icon{
+    display: flex;
+    padding-right: 10px;
+}
+.card{
+    margin-bottom: 10px;
+    margin-left: 5px;
+}
+
+@media(max-width:480px){
+    .card {
+        margin: 0 auto;
+        float: none; 
+        margin-bottom: 10px;
+}
+}
