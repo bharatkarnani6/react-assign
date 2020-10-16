@@ -1,20 +1,43 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react'
+import React, { Component,useState } from 'react'
+import axios from 'axios';
 import Logo from '../Assets/img/reactlogo.png'
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogActions from '@material-ui/core/DialogActions';
+import Button from '@material-ui/core/Button';
+import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete'
 import Account from '../Assets/img/my_account.svg';
 import './Sidebar.css'
 import Dashboard from '../Dashboard/Dashboard';
-import IssueList from '../Issues/IssueList';
+import IssueList from '../Issues/IssueList.js';
 import CreateIssue from '../Issues/CreateIssue';
 import Error from '../Error'
 import { Link, Route, Switch } from 'react-router-dom'
-const sidebar = () => {
+
+const top100Films=[];
+    axios.get("http://localhost:8000/api/v1/issues/")
+    .then(res=>{
+        res.data.map(d=>{
+            top100Films.push({title:d.title})
+        })
+    })
+
+export default function FreeSoloCreateOptionDialog() {
+    
+    
+    const [value, setValue] = useState(null);
+    const [open, toggleOpen] =useState(false);
+
     return (
         <div className="d-flex" id="wrapper">
             <div className="bg-light border-right" id="sidebar-wrapper">
-                <div className="sidebar-heading"><img src={Logo} /></div>
+                <div className="sidebar-heading"><img src={Logo} to="/" /></div>
                 <div className="list-group list-group-flush">
                     <div className="list-group-item list-group-item-action bg-light"><i className="fa fa-tachometer" aria-hidden="true"></i> &nbsp;<Link to='/'>Dashboard</Link></div>
                     <div className="list-group-item list-group-item-action bg-light"><i className="fa fa-pencil" aria-hidden="true"></i>&nbsp; <Link to='/issuelist'>Issue List</Link></div>
@@ -27,10 +50,34 @@ const sidebar = () => {
                         <span className="navbar-toggler-icon"></span>
                     </button>
                     <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                        <form className="form-inline my-7 my-lg-0">
-                            <input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" />
-                            <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-                        </form>
+                        <div className="form-inline my-7 my-lg-0">
+                            <React.Fragment>
+                                <Autocomplete
+                                    value={value}
+                                    id="Search"
+                                    options={top100Films}
+                                    getOptionLabel={(option) => {
+                                        // e.g value selected with enter, right from the input
+                                        if (typeof option === 'string') {
+                                            return option;
+                                        }
+                                        if (option.inputValue) {
+                                            return option.inputValue;
+                                        }
+                                        return option.title;
+                                    }}
+                                    selectOnFocus
+                                    clearOnBlur
+                                    handleHomeEndKeys
+                                    renderOption={(option) => option.title}
+                                    style={{ width: 300 }}
+                                    freeSolo
+                                    renderInput={(params) => (
+                                        <TextField {...params} label="Search" variant="outlined" />
+                                    )}
+                                />
+                            </React.Fragment>
+                        </div>
                         <ul className="navbar-nav ml-auto mt-2 mt-lg-0">
                             <li className="nav-item active hide">
                                 <div className="nav-link" ><i className="fa fa-tachometer" aria-hidden="true"></i> &nbsp;<Link to='/'>Dashboard</Link> <span className="sr-only">(current)</span></div>
@@ -62,4 +109,4 @@ const sidebar = () => {
     )
 }
 
-export default sidebar;
+

@@ -1,5 +1,6 @@
 import React from 'react';
-import './Dashboard.css'
+import './Dashboard.css';
+import axios from 'axios';
 import AccountIcon from '../Assets/img/Sanal.svg'
 import { Bar } from 'react-chartjs-2';
 
@@ -28,8 +29,45 @@ const state = {
   ]
 }
 
+
 export default class Dashboard extends React.Component {
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      info: [],
+      high: 0,
+      totalIssue: 0,
+      low: 0,
+    }
+  }
+  componentDidMount() {
+    axios.get('http://localhost:8000/api/v1/issues/')
+      .then(res => {
+        let l = 0;
+        let h=0;
+        let lengthhigh, lengthlow;
+        res.data.map(d => {
+          if (d.priority === "HIGH") {
+            h++
+          }
+          if (d.priority === "LOW") {
+            l++
+          }
+        })
+        lengthhigh = h;
+        lengthlow = l;
+        this.setState({ info: res.data })
+        this.setState({ high: lengthhigh })
+        this.setState({ low: lengthlow })
+        this.setState({ totalIssue: res.data.length })
+      })
+      .catch(err => {
+        console.log(err);
+      })
+  }
   render() {
+    const { info } = this.state;
     return (
       <div>
         <div className="col-12">
@@ -56,39 +94,22 @@ export default class Dashboard extends React.Component {
               <div className="card-header text-center">
                 High Priority</div>
               <ul className="list-group list-group-flush">
-                <div className="list-group-item card-body">
-                  <div className="row">
-                    <div className="col-7">
-                      <h6 className="card-title font-weight-bold">Lorem ipsum dolor sit</h6>
-                    </div>
-                    <div className="col-5">
-                      <small className="card-date">January 02,2019</small>
-                    </div>
-                  </div>
-                  <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                </div>
-                <div className="list-group-item card-body">
-                  <div className="row">
-                    <div className="col-7">
-                      <h6 className="card-title font-weight-bold">Lorem ipsum dolor sit</h6>
-                    </div>
-                    <div className="col-5">
-                      <small className="card-date">January 02,2019</small>
-                    </div>
-                  </div>
-                  <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                </div>
-                <div className="list-group-item card-body">
-                  <div className="row">
-                    <div className="col-7">
-                      <h6 className="card-title font-weight-bold">Lorem ipsum dolor sit</h6>
-                    </div>
-                    <div className="col-5">
-                      <small className="card-date">January 02,2019</small>
-                    </div>
-                  </div>
-                  <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                </div>
+                {
+                  info.slice(0, 20).map((d, i) =>
+                    d.priority === "HIGH" ?
+                      <div key={d.id} className="list-group-item card-body">
+                        <div className="row">
+                          <div className="col-7">
+                            <h6 className="card-title font-weight-bold">{d.title}</h6>
+                          </div>
+                          <div className="col-5">
+                            <small className="card-date">{new Date(d.created_at).toDateString()}</small>
+                          </div>
+                        </div>
+                        <p className="card-text">{d.description}</p>
+                      </div> : null
+                  )
+                }
               </ul>
             </div>
           </div>
@@ -149,14 +170,14 @@ export default class Dashboard extends React.Component {
                     </div>
                   </div>
                   <div className="progress">
-                    <div className="progress-bar bg-danger" role="progressbar" style={{width: "25%"}} aria-valuenow={25} aria-valuemin={0} aria-valuemax={100}></div>
+                   <div className="progress-bar bg-danger" role="progressbar" style={{ width: `${this.state.high}%`}} aria-valuenow={25} aria-valuemin={0} aria-valuemax={100}></div>
                   </div>
                   <div className="row data">
                     <div className="col">
-                      <p>High Priority Issue: 8</p>
+                      <p>High Priority Issue: {this.state.high}</p>
                     </div>
                     <div className="col">
-                    <p className="text-right">Total Issue: 10</p>
+                      <p className="text-right">Total Issue: {this.state.totalIssue}</p>
                     </div>
                   </div>
                 </div>
@@ -171,14 +192,14 @@ export default class Dashboard extends React.Component {
                     </div>
                   </div>
                   <div className="progress">
-                    <div className="progress-bar bg-warning" role="progressbar" style={{width: "65%"}} aria-valuenow={25} aria-valuemin={0} aria-valuemax={100}></div>
+                    <div className="progress-bar bg-warning" role="progressbar" style={{ width:`${this.state.low}%` }} aria-valuenow={25} aria-valuemin={0} aria-valuemax={100}></div>
                   </div>
                   <div className="row data">
                     <div className="col">
-                      <p>High Priority Issue: 8</p>
+                      <p>Low Priority Issue: {this.state.low}</p>
                     </div>
                     <div className="col">
-                    <p className="text-right">Total Issue: 10</p>
+                      <p className="text-right">Total Issue: {this.state.totalIssue}</p>
                     </div>
                   </div>
                 </div>
