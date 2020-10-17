@@ -4,32 +4,60 @@ import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import '../Issues/CreateIssue.css'
 type Inputs = {
-    project: string,
+    created_by: string,
     status: string,
     priority: string,
     title: string,
     desc: string,
     assignee: string,
-    file: any,
+    short_id: any,
     date: any,
 };
-
 const CreateIssue = () => {
+
     const { register, handleSubmit, errors } = useForm<Inputs>();
-    const [formDatas, setFormDatas] = useState([]);
+    const [formDatas, setFormDatas] = useState<any>([]);
 
     useEffect(() => {
         async function fetchMyAPI() {
-          const res= await axios('http://localhost:8000/api/v1/issues/')
-          setFormDatas(res.data)
+          let res= await fetch('http://localhost:8000/api/v1/issues/')
+          res = await res.json()
+          setFormDatas(res)
         }
     
         fetchMyAPI()
       }, [])
 
+      
+      let DuplicatesStatus: any[] =[]
+      let Duplicatespriority: any[] =[]
+      let DuplicatesAssignee: any[] =[]
+      let DuplicatesCreatedBy: any[] =[]
 
+      formDatas.map((d:any)=>{
+        DuplicatesStatus.push(d.status);
+        Duplicatespriority.push(d.priority);
+        DuplicatesAssignee.push(d.assignee);
+        DuplicatesCreatedBy.push(d.created_by);
+        
+      })
+      const distinctStatus = DuplicatesStatus.filter((n:any, i:any) => DuplicatesStatus.indexOf(n) === i);
+      const distinctpriority = Duplicatespriority.filter((n:any, i:any) => Duplicatespriority.indexOf(n) === i);
+      const distinctAssigne = DuplicatesAssignee.filter((n:any, i:any) => DuplicatesAssignee.indexOf(n) === i);
+      const distinctCreated_By= DuplicatesCreatedBy.filter((n:any, i:any) => DuplicatesCreatedBy.indexOf(n) === i);
+    
+      
     const onsubmit = (values: any) => {
         console.log(values);
+        axios.post('http://localhost:8000/api/v1/issues/',values)
+        .then(res=>{
+            console.log(res);
+            
+        })
+        .catch(err=>{
+            console.log(err);
+            
+        })
 
     }
     return (        
@@ -38,22 +66,27 @@ const CreateIssue = () => {
             <form onSubmit={handleSubmit(onsubmit)}>
                 <div className="form-row">
                     <div className="form-group col-md-4">
-                        <label htmlFor="inputProject">Project</label>
-                        <select id="inputProject" name="project" ref={register({ required: true })} className="form-control">
-                            <option value="">Select Project...</option>
-                            <option value='Project 1'>Project 1</option>
-                            <option value='Project 2'>Project 2</option>
-                            <option value='Project 3'>Project 3</option>
+                        <label htmlFor="inputProject">Created By</label>
+                        
+                        <select id="inputProject" name="created_by" ref={register({ required: true })} className="form-control">
+                            <option value="">Select Created By...</option>
+                            {
+                            distinctCreated_By.map((d:any)=>
+                            <option value={d}>{d}</option>
+                            )
+                        }
                         </select>
-                        {errors.project && <span className="text-danger">This field is required</span>}
+                        {errors.created_by && <span className="text-danger">This field is required</span>}
                     </div>
                     <div className="form-group col-md-4">
                         <label htmlFor="inputIssue">Status</label>
                         <select id="inputIssue" name="status" ref={register({ required: true })} className="form-control">
                         <option value="">Select Status</option>
-                            <option value='TODO'>TODO</option>
-                            <option value='DOING'>DOING</option>
-                            <option value='DONE'>DONE</option>
+                        {
+                            distinctStatus.map((d:any)=>
+                            <option value={d}>{d}</option>
+                            )
+                        }
                         </select>
                         {errors.status && <span className="text-danger">This field is required</span>}
                     </div>
@@ -61,10 +94,11 @@ const CreateIssue = () => {
                         <label htmlFor="inputPriority">Priority</label>
                         <select id="inputPriority" name="priority" ref={register({ required: true })} className="form-control">
                             <option value="">Choose Priority...</option>
-                            <option value='SHOWSTOPPER'>SHOWSTOPPER</option>
-                            <option value='HIGH'>HIGH</option>
-                            <option value='LOW'>LOW</option>
-                            <option value='VERYLOW'>VERY LOW</option>
+                            {
+                            distinctpriority.map((d:any)=>
+                            <option value={d}>{d}</option>
+                            )
+                        }
                         </select>
                         {errors.priority && <span className="text-danger">This field is required</span>}
                     </div>
@@ -84,18 +118,20 @@ const CreateIssue = () => {
                         <label htmlFor="inputAssignee">Assignee</label>
                         <select id="inputAssignee" name="assignee" ref={register({ required: true })} className="form-control">
                             <option value="">Choose Assignee...</option>
-                            <option value='Assign 1'>Assign 1</option>
-                            <option value='Assign 2'>Assign 2</option>
-                            <option value='Assign 3'>Assign 3</option>
+                            {
+                            distinctAssigne.map((d:any)=>
+                            <option value={d}>{d}</option>
+                            )
+                        }
                         </select>
                         {errors.assignee && <span className="text-danger">This field is required</span>}
                     </div>
                 </div>
                 <div className="form-row">
-                    <div className="form-group col-md-4">
-                        <label htmlFor="exampleInputFile">Image Upload</label>
-                        <input type="file" name="file" ref={register({ required: true })} className="form-control-file" id="exampleInputFile" aria-describedby="fileHelp" />
-                        {errors.file && <span className="text-danger">This field is required</span>}
+                <div className="form-group col-md-4">
+                        <label htmlFor="inputTitle">ID</label>
+                        <input type="text" name="short_id" ref={register({ required: true })} className="form-control" id="inputId" />
+                        {errors.short_id && <span className="text-danger">This field is required</span>}
                     </div>
                     <div className="form-group col-md-4">
                         <label htmlFor="date">Due Date</label>
@@ -112,6 +148,7 @@ const CreateIssue = () => {
                     </div>
                 </div>
             </form>
+                
         </div>
     );
 }

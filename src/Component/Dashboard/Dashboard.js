@@ -118,39 +118,22 @@ export default class Dashboard extends React.Component {
               <div className="card-header text-center">
                 Recently Updated Issue</div>
               <ul className="list-group list-group-flush">
-                <div className="list-group-item card-body">
-                  <div className="row">
-                    <div className="col-7">
-                      <h6 className="card-title font-weight-bold">Lorem ipsum dolor sit</h6>
-                    </div>
-                    <div className="col-5">
-                      <small className="card-date">January 02,2019</small>
-                    </div>
-                  </div>
-                  <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                </div>
-                <div className="list-group-item card-body">
-                  <div className="row">
-                    <div className="col-7">
-                      <h6 className="card-title font-weight-bold">Lorem ipsum dolor sit</h6>
-                    </div>
-                    <div className="col-5">
-                      <small className="card-date">January 02,2019</small>
-                    </div>
-                  </div>
-                  <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                </div>
-                <div className="list-group-item card-body">
-                  <div className="row">
-                    <div className="col-7">
-                      <h6 className="card-title font-weight-bold">Lorem ipsum dolor sit</h6>
-                    </div>
-                    <div className="col-5">
-                      <small className="card-date">January 02,2019</small>
-                    </div>
-                  </div>
-                  <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                </div>
+              {
+                  info.map((d, i) =>
+                    i>210 && i<214 ?
+                      <div key={d.id} className="list-group-item card-body">
+                        <div className="row">
+                          <div className="col-7">
+                            <h6 className="card-title font-weight-bold">{d.title}</h6>
+                          </div>
+                          <div className="col-5">
+                            <small className="card-date">{new Date(d.created_at).toDateString()}</small>
+                          </div>
+                        </div>
+                        <p className="card-text">{d.description}</p>
+                      </div> : null
+                  )
+                }
               </ul>
             </div>
           </div>
