@@ -1,7 +1,7 @@
 import React from 'react';
 import './Dashboard.css';
 import axios from 'axios';
-import AccountIcon from '../Assets/img/Sanal.svg'
+import AccountIcon from '../../Assets/img/Sanal.svg';
 import { Bar } from 'react-chartjs-2';
 
 const state = {

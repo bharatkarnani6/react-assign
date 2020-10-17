@@ -3,28 +3,23 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component,useState } from 'react'
 import axios from 'axios';
-import Logo from '../Assets/img/reactlogo.png'
+import Logo from '../../Assets/img/reactlogo.png'
 import TextField from '@material-ui/core/TextField';
-import Dialog from '@material-ui/core/Dialog';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogActions from '@material-ui/core/DialogActions';
-import Button from '@material-ui/core/Button';
-import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete'
-import Account from '../Assets/img/my_account.svg';
+
+import Autocomplete from '@material-ui/lab/Autocomplete'
+import Account from '../../Assets/img/my_account.svg';
 import './Sidebar.css'
 import Dashboard from '../Dashboard/Dashboard';
 import IssueList from '../Issues/IssueList.js';
 import CreateIssue from '../Issues/CreateIssue';
-import Error from '../Error'
+import Error from '../../Error'
 import { Link, Route, Switch } from 'react-router-dom'
 
-const top100Films=[];
+const gettingData=[];
     axios.get("http://localhost:8000/api/v1/issues/")
     .then(res=>{
         res.data.map(d=>{
-            top100Films.push({title:d.title})
+            gettingData.push({title:d.title})
         })
     })
 
@@ -55,7 +50,7 @@ export default function FreeSoloCreateOptionDialog() {
                                 <Autocomplete
                                     value={value}
                                     id="Search"
-                                    options={top100Films}
+                                    options={gettingData}
                                     getOptionLabel={(option) => {
                                         // e.g value selected with enter, right from the input
                                         if (typeof option === 'string') {

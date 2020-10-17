@@ -1,32 +1,45 @@
-import React from 'react';
-import {useForm} from 'react-hook-form';
+import Axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import axios from 'axios';
 import '../Issues/CreateIssue.css'
 type Inputs = {
     project: string,
-    issue: string,
-    priority:string,
-    title:string,
-    desc:string,
-    assignee:string,
-    file:any,
-    date:any,
-  };
+    status: string,
+    priority: string,
+    title: string,
+    desc: string,
+    assignee: string,
+    file: any,
+    date: any,
+};
+
 const CreateIssue = () => {
-    const{register, handleSubmit,errors}=useForm<Inputs>();
+    const { register, handleSubmit, errors } = useForm<Inputs>();
+    const [formDatas, setFormDatas] = useState([]);
+
+    useEffect(() => {
+        async function fetchMyAPI() {
+          const res= await axios('http://localhost:8000/api/v1/issues/')
+          setFormDatas(res.data)
+        }
     
-    const onsubmit=(values:any)=>{
+        fetchMyAPI()
+      }, [])
+
+
+    const onsubmit = (values: any) => {
         console.log(values);
-        
+
     }
-    return (
+    return (        
+        
         <div className="create">
             <form onSubmit={handleSubmit(onsubmit)}>
                 <div className="form-row">
                     <div className="form-group col-md-4">
                         <label htmlFor="inputProject">Project</label>
-                        <select id="inputProject" 
-                        name="project" 
-                        ref={register({ required: true })} className="form-control">
+                        <select id="inputProject" name="project" ref={register({ required: true })} className="form-control">
                             <option value="">Select Project...</option>
                             <option value='Project 1'>Project 1</option>
                             <option value='Project 2'>Project 2</option>
@@ -35,22 +48,23 @@ const CreateIssue = () => {
                         {errors.project && <span className="text-danger">This field is required</span>}
                     </div>
                     <div className="form-group col-md-4">
-                        <label htmlFor="inputIssue">Issue Type</label>
-                        <select id="inputIssue" name="issue" ref={register({ required: true })} className="form-control">
-                            <option value="">Select Issue...</option>
-                            <option value='Issue 1'>Issue 1</option>
-                            <option value='Issue 2'>Issue 2</option>
-                            <option value='Issue 3'>Issue 3</option>
+                        <label htmlFor="inputIssue">Status</label>
+                        <select id="inputIssue" name="status" ref={register({ required: true })} className="form-control">
+                        <option value="">Select Status</option>
+                            <option value='TODO'>TODO</option>
+                            <option value='DOING'>DOING</option>
+                            <option value='DONE'>DONE</option>
                         </select>
-                        {errors.issue && <span className="text-danger">This field is required</span>}
+                        {errors.status && <span className="text-danger">This field is required</span>}
                     </div>
                     <div className="form-group col-md-4">
                         <label htmlFor="inputPriority">Priority</label>
                         <select id="inputPriority" name="priority" ref={register({ required: true })} className="form-control">
                             <option value="">Choose Priority...</option>
-                            <option value='Priority 1'>Priority 1</option>
-                            <option value='Priority 2'>Priority 2</option>
-                            <option value='Priority 3'>Priority 3</option>
+                            <option value='SHOWSTOPPER'>SHOWSTOPPER</option>
+                            <option value='HIGH'>HIGH</option>
+                            <option value='LOW'>LOW</option>
+                            <option value='VERYLOW'>VERY LOW</option>
                         </select>
                         {errors.priority && <span className="text-danger">This field is required</span>}
                     </div>
@@ -79,7 +93,7 @@ const CreateIssue = () => {
                 </div>
                 <div className="form-row">
                     <div className="form-group col-md-4">
-                        <label htmlFor="exampleInputFile">File input</label>
+                        <label htmlFor="exampleInputFile">Image Upload</label>
                         <input type="file" name="file" ref={register({ required: true })} className="form-control-file" id="exampleInputFile" aria-describedby="fileHelp" />
                         {errors.file && <span className="text-danger">This field is required</span>}
                     </div>
@@ -90,10 +104,10 @@ const CreateIssue = () => {
                     </div>
                 </div><br></br>
                 <div className="form-row">
-                    <div className="form-group col-md-4">  
+                    <div className="form-group col-md-4">
                     </div>
                     <div className="form-group col-md-4">
-                    <button type="submit" className="btn btn-primary">Create</button>&nbsp;
+                        <button type="submit" className="btn btn-primary">Create</button>&nbsp;
                     <button type="reset" className="btn btn-primary">Reset</button>
                     </div>
                 </div>

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import './IssueList.css';
-import AccountIcon from '../Assets/img/Sanal.svg'
+import AccountIcon from '../../Assets/img/Sanal.svg'
 
 class IssueList extends Component {
     constructor(props) {
